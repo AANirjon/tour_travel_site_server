@@ -14,24 +14,30 @@ app.use(cors());
 app.use(express.json());
 
 // connenting MongoDB
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.amqnd.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://ahnaf:ahnaf@cluster0.yfdrcxl.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-});
+})
 async function run() {
     try {
-        await client.connect();
+        await client.connect()
+        .then(console.log("database connected"))
+
        
-        const database = client.db("tourismDb");
-        const tourServices = database.collection("tourPack");
+        const database = client.db("tours");
+        const tourServices = database.collection("tour");
         const serviceOrders = database.collection("orders");
+        // const database = client.db("tourismDb");
+        // const tourServices = database.collection("tourPack");
+        // const serviceOrders = database.collection("orders");
 
         // Get All packages
         app.get("/packages", async (req, res) => {
             const cursor = tourServices.find({});
             const packages = await cursor.toArray();
             res.send(packages);
+            // console.log(packages)
         });
 
         // Get Oneday Tours
@@ -52,17 +58,22 @@ async function run() {
         // Get single order
         app.get("/order/:id", async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObjectId(id) };
+            console.log(id)
+            const query = { _id:id };
             const order = await tourServices.findOne(query);
             res.send(order);
+            console.log("order",order)
         });
 
         // get single Package
         app.get("/Packages/:id", async (req, res) => {
+            console.log(req.params)
             const id = req.params.id;
             
-            const query = { _id: ObjectId(id) };
+            const query = { _id: id};
+            // console.log("query",query)
             const package = await tourServices.findOne(query);
+            console.log("pakage",package)
             res.send(package);
         });
 
@@ -116,10 +127,12 @@ async function run() {
         app.delete("/orders/delete/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
+            console.log("qdel",query)
+
             const result = await serviceOrders.deleteOne(query);
+            console.log("res",result)
             res.send(result);
         });
-
     } finally {
         // await client.close()
     }
