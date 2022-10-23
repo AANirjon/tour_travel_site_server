@@ -13,7 +13,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// connenting MongoDB
+// Connenting MongoDB
 const uri = `mongodb+srv://ahnaf:ahnaf@cluster0.yfdrcxl.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
